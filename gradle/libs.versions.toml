@@ -20,8 +20,8 @@ activityCompose = "1.11.0"
 
 # Android baseline
 androidMinSdk = "24"
-androidTargetSdk = "36"
-androidCompileSdk = "36"
+androidTargetSdk = "37"
+androidCompileSdk = "37"
 
 [libraries]
 # Ktor (network layer)
@@ -37,6 +37,7 @@ coil-network-okhttp = { module = "io.coil-kt.coil3:coil-network-okhttp", version
 
 # Koin (DI)
 koin-core = { module = "io.insert-koin:koin-core", version.ref = "koin" }
+koin-core-viewmodel = { module = "io.insert-koin:koin-core-viewmodel", version.ref = "koin" }
 koin-compose = { module = "io.insert-koin:koin-compose", version.ref = "koin" }
 koin-compose-viewmodel = { module = "io.insert-koin:koin-compose-viewmodel", version.ref = "koin" }
 
@@ -59,12 +60,6 @@ serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-jso
 jb-navigation-compose = { module = "org.jetbrains.androidx.navigation:navigation-compose", version.ref = "jbNavigation" }
 jb-lifecycle-viewmodel-compose = { module = "org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "jbLifecycle" }
 jb-lifecycle-runtime-compose = { module = "org.jetbrains.androidx.lifecycle:lifecycle-runtime-compose", version.ref = "jbLifecycle" }
-
-# Compose Multiplatform（直接坐标，替代已废弃的 compose.* 访问器）
-compose-runtime = { module = "org.jetbrains.compose.runtime:runtime", version.ref = "composeMultiplatform" }
-compose-foundation = { module = "org.jetbrains.compose.foundation:foundation", version.ref = "composeMultiplatform" }
-compose-material3 = { module = "org.jetbrains.compose.material3:material3", version.ref = "composeMultiplatform" }
-compose-ui = { module = "org.jetbrains.compose.ui:ui", version.ref = "composeMultiplatform" }
 
 # Android only
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "activityCompose" }
