@@ -12,9 +12,11 @@ import io.ktor.client.request.get
 import io.ktor.client.request.header
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
+import io.ktor.client.statement.HttpResponse
 import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
 import io.ktor.http.contentType
+import io.ktor.http.isSuccess
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.floatOrNull
@@ -50,12 +52,14 @@ class NovelAIApiServiceImpl(
     override suspend fun generateImage(parameters: GenerationParameters): ByteArray {
         val token = tokenProvider() ?: error("未配置 NovelAI API Token")
         val payload = parameters.toPayload()
-        val responseBytes: ByteArray = client.post("$IMAGE_BASE_URL/ai/generate-image") {
+        val response = client.post("$IMAGE_BASE_URL/ai/generate-image") {
             contentType(ContentType.Application.Json)
             header(HttpHeaders.Authorization, "Bearer $token")
             setBody(json.encodeToString(ImageRequestPayload.serializer(), payload))
-        }.body()
+        }
+        ensureSuccess(response, "/ai/generate-image")
 
+        val responseBytes: ByteArray = response.body()
         return if (responseBytes.size >= 2 && responseBytes[0] == ZIP_MAGIC[0] && responseBytes[1] == ZIP_MAGIC[1]) {
             extractFirstPngFromZip(responseBytes) ?: error("ZIP 响应中未找到 PNG 图像")
         } else {
@@ -65,17 +69,21 @@ class NovelAIApiServiceImpl(
 
     override suspend fun getSubscription(): SubscriptionDto {
         val token = tokenProvider() ?: error("未配置 NovelAI API Token")
-        return client.get("$API_BASE_URL/user/subscription") {
+        val response = client.get("$API_BASE_URL/user/subscription") {
             header(HttpHeaders.Authorization, "Bearer $token")
-        }.body()
+        }
+        ensureSuccess(response, "/user/subscription")
+        return response.body()
     }
 
     override suspend fun getOpusBatteryState(): OpusBatteryState {
         val subscription = getSubscription()
         val token = tokenProvider() ?: error("未配置 NovelAI API Token")
-        val userData: JsonObject = client.get("$API_BASE_URL/user/data") {
+        val response = client.get("$API_BASE_URL/user/data") {
             header(HttpHeaders.Authorization, "Bearer $token")
-        }.body()
+        }
+        ensureSuccess(response, "/user/data")
+        val userData: JsonObject = response.body()
 
         val batteryPercent = userData[KEY_BATTERY_PERCENT]?.jsonPrimitive?.floatOrNull
             ?: (userData[KEY_BATTERY] as? JsonObject)
@@ -87,6 +95,12 @@ class NovelAIApiServiceImpl(
             anlas = subscription.anlas ?: 0,
             batteryPercent = batteryPercent,
         )
+    }
+
+    private suspend fun ensureSuccess(response: HttpResponse, endpoint: String) {
+        if (!response.status.isSuccess()) {
+            throw NaiApiException(response.status.value, "HTTP ${response.status.value} from $endpoint")
+        }
     }
 
     private fun GenerationParameters.toPayload(): ImageRequestPayload = ImageRequestPayload(

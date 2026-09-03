@@ -19,3 +19,5 @@ actual fun extractFirstPngFromZip(zipBytes: ByteArray): ByteArray? {
     }
     return null
 }
+
+actual fun isTransportError(throwable: Throwable): Boolean = throwable is java.io.IOException

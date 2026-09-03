@@ -1,0 +1,15 @@
+feat: 补齐图片存储管道与 Repository 层 (评审 P0 落地)：core:storage + core:data + core:network 增强
+
+按评审阶段1方案落地三件核心事项。其一，新增 core:storage 模块：ImageFileStorage 抽象由 Android
+（内部 filesDir/images、BitmapFactory+WEBP 缩略图）与桌面（~/.novelai-studio/images、ImageIO PNG
+缩略图）双端实现，saveImage 一次产出原图落盘+256px 缩略图+BlurHash；BlurhashEncoder 为纯 Kotlin
+标准算法编解码器（严格遵循 size+quant+DC+AC 字段布局，经纯白/纯黑/梯度往返测试验证，全程修复了
+顺序错误与解码长度公式）；生成流程由此摆脱 pending 占位路径。其二，新增 core:data Repository 层：
+ImageRepository 与 GenerationRepository 提供双向实体映射、双轨调度、落盘入库管道与 GenerationOutcome
+密封结果（Success/NeedsAnlasConfirmation/Failure）；所有 ViewModel 改为只依赖此抽象，即达 SRP/DIP
+与可 Mock 化，配套 runTest 假实现覆盖成功/降级/Anlas 确认/401不重试/503重试三次/删除联调。其三，
+core:network 强化：端点统一 ensureSuccess 校验并抛出携带 statusCode 的 NaiApiException，按 401/402/
+429/5xx 映射用户可读中文提示；新增 Retry 指数退避重试（1s/2s/4s，仅重试传输异常与限流/服务端错误，
+CancellationException 立即透传）；平台新增 isTransportError 判定收口。
+
+Co-authored-by: CommandCodeBot <noreply@commandcode.ai>
