@@ -1,0 +1,5 @@
+chore: 初始化 MD3E 原生客户端工程骨架与构建系统
+
+搭建 Kotlin Multiplatform + Compose Multiplatform 1.12.0 / Kotlin 2.3.21 / AGP 9.3 的根工程：settings.gradle.kts 注册 composeApp、androidApp、五个 core 模块与五个 feature 模块共 12 个子工程；version catalog (gradle/libs.versions.toml) 统一管理 Ktor、Coil 3、Koin、Room KMP、DataStore、Okio 等依赖版本，全部选自 2026-09 当前稳定线；gradlew/gradlew.bat 内置 GRADLE_USER_HOME=D:\DevCaches\gradle 与 JAVA_HOME=D:\DevTools\jdk-17 默认值，确保依赖与工具链强制落盘 D 盘；同时收录四大技术规约文档（架构、NAI V5 协议、MD3E 设计、路线图）与含构建指南的 README，为后续分阶段实现提供单一事实来源。
+
+Co-authored-by: CommandCodeBot <noreply@commandcode.ai>
