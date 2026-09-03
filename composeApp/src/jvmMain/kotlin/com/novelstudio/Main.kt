@@ -8,6 +8,8 @@ import com.novelstudio.di.appModule
 import org.koin.core.context.startKoin
 
 fun main() {
+    CrashReporter.install(null)
+
     startKoin {
         modules(appModule(null))
     }

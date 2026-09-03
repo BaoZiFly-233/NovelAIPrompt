@@ -19,7 +19,7 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             api(project(":core:designsystem"))
-            implementation(project(":core:database"))
+            implementation(project(":core:data"))
             implementation(libs.coil.compose)
             implementation(libs.koin.core)
             implementation(libs.koin.compose)

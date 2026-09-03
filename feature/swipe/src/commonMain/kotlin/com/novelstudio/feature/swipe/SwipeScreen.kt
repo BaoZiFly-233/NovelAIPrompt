@@ -32,9 +32,8 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
-import com.novelstudio.core.database.ImageEntity
-import com.novelstudio.core.designsystem.motion.MD3EMotion
 import com.novelstudio.core.model.ImageRecord
+import com.novelstudio.core.designsystem.motion.MD3EMotion
 import kotlinx.coroutines.launch
 import kotlin.math.abs
 import kotlin.math.sign
@@ -74,7 +73,7 @@ fun SwipeScreen(viewModel: SwipeViewModel, modifier: Modifier = Modifier) {
 
 @Composable
 private fun SwipeCard(
-    record: ImageEntity,
+    record: ImageRecord,
     modifier: Modifier = Modifier,
     onSwipedRight: () -> Unit,
     onSwipedLeft: () -> Unit,

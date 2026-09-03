@@ -19,14 +19,16 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             api(project(":core:designsystem"))
-            implementation(project(":core:network"))
-            implementation(project(":core:database"))
-            implementation(project(":core:common"))
+            implementation(project(":core:data"))
             implementation(libs.koin.core)
             implementation(libs.koin.compose)
             implementation(libs.koin.compose.viewmodel)
             implementation(libs.coroutines.core)
             implementation(libs.jb.lifecycle.runtime.compose)
+        }
+        commonTest.dependencies {
+            implementation(kotlin("test"))
+            implementation(libs.coroutines.test)
         }
     }
 }

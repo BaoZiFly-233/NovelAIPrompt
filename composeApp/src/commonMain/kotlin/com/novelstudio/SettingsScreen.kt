@@ -99,6 +99,21 @@ fun SettingsScreen(modifier: Modifier = Modifier) {
             Text(it, color = MaterialTheme.colorScheme.primary, style = MaterialTheme.typography.bodyMedium)
         }
 
+        // 崩溃日志回溯：无需 USB 调试即可把闪退堆栈带回来
+        val crash = CrashReporter.latestCrash()
+        if (crash != null) {
+            Text(
+                "检测到上次异常退出（请把以下内容反馈给开发者）",
+                style = MaterialTheme.typography.titleSmall,
+                color = MaterialTheme.colorScheme.error,
+            )
+            Text(
+                crash,
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
+
         Spacer(Modifier.height(24.dp))
     }
 }

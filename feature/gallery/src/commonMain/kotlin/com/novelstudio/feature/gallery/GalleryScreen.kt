@@ -37,7 +37,6 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
-import com.novelstudio.core.database.ImageEntity
 import com.novelstudio.core.designsystem.theme.MD3EPillShape
 import com.novelstudio.core.model.ImageRecord
 
@@ -48,7 +47,7 @@ import com.novelstudio.core.model.ImageRecord
 @Composable
 fun GalleryScreen(viewModel: GalleryViewModel, modifier: Modifier = Modifier) {
     val records by viewModel.records.collectAsStateWithLifecycle()
-    var selected by remember { mutableStateOf<ImageEntity?>(null) }
+    var selected by remember { mutableStateOf<ImageRecord?>(null) }
 
     Column(modifier = modifier.fillMaxSize().padding(horizontal = 20.dp)) {
         Text("万级图库", style = MaterialTheme.typography.headlineMedium, modifier = Modifier.padding(vertical = 16.dp))
@@ -96,9 +95,9 @@ fun GalleryScreen(viewModel: GalleryViewModel, modifier: Modifier = Modifier) {
     }
 }
 
-/** 图库卡片：统一圆角 16dp，顶部渐变遮罩徽标，右下收藏胶囊 */
+/** 图库卡片：统一圆角 16dp，顶部渐变遮罩徽标，右下收藏胶囊；网格强制加载 WebP 缩略图避免 OOM */
 @Composable
-private fun GalleryCard(record: ImageEntity, onClick: () -> Unit, onToggleStar: () -> Unit) {
+private fun GalleryCard(record: ImageRecord, onClick: () -> Unit, onToggleStar: () -> Unit) {
     val liked = record.starRating >= ImageRecord.STAR_LIKE
     Box(
         modifier = Modifier
@@ -106,7 +105,10 @@ private fun GalleryCard(record: ImageEntity, onClick: () -> Unit, onToggleStar: 
             .clickable(onClick = onClick)
             .background(MaterialTheme.colorScheme.surfaceVariant, RoundedCornerShape(16.dp)),
     ) {
-        val model = if (record.filePath.startsWith("pending")) null else "file://${record.filePath}"
+        val model = listOfNotNull(
+            record.thumbnailPath.takeIf { it.isNotBlank() },
+            record.filePath.takeIf { it.isNotBlank() },
+        ).firstOrNull { !it.startsWith("pending") }?.let { "file://$it" }
         if (model == null) {
             Box(
                 Modifier.fillMaxWidth().height(record.height.dp.coerceIn(120.dp, 360.dp)),
@@ -162,7 +164,7 @@ private fun GalleryCard(record: ImageEntity, onClick: () -> Unit, onToggleStar: 
 /** 灯箱：大图 + PNG Info 侧栏 + 「一键回填到工作台」 */
 @Composable
 private fun LightboxDialog(
-    record: ImageEntity,
+    record: ImageRecord,
     onDismiss: () -> Unit,
     onFork: () -> Unit,
     onToggleStar: () -> Unit,

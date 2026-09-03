@@ -25,4 +25,6 @@ dependencies {
     implementation(libs.androidx.activity.compose)
     implementation(libs.koin.core)
     implementation(libs.coroutines.core)
+    implementation(libs.coil.compose)
+    implementation(libs.okio)
 }

@@ -8,17 +8,23 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import com.novelstudio.core.database.AppDatabase
 import com.novelstudio.core.database.ImageDao
 import com.novelstudio.core.database.databaseBuilder
+import com.novelstudio.core.data.ImageRepository
+import com.novelstudio.core.data.GenerationRepository
+import com.novelstudio.core.data.ImageRepositoryImpl
+import com.novelstudio.core.data.GenerationRepositoryImpl
 import com.novelstudio.core.model.InMemoryPromptDraftStore
 import com.novelstudio.core.model.PromptDraftStore
 import com.novelstudio.core.network.NovelAIApiService
 import com.novelstudio.core.network.NovelAIApiServiceImpl
 import com.novelstudio.core.network.platformHttpEngine
+import com.novelstudio.core.storage.ImageFileStorage
+import com.novelstudio.core.storage.imageFileStorage
 import com.novelstudio.feature.compare.CompareViewModel
 import com.novelstudio.feature.gallery.GalleryViewModel
 import com.novelstudio.feature.inpaint.InpaintViewModel
 import com.novelstudio.feature.swipe.SwipeViewModel
 import com.novelstudio.feature.workbench.WorkbenchViewModel
-import com.novelstudio.settingsDirPath
+import com.novelstudio.settingsFilePath
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.serialization.kotlinx.json.json
@@ -71,7 +77,7 @@ private fun createHttpClient(): HttpClient = HttpClient(platformHttpEngine()) {
 fun appModule(platformContext: Any?): Module = module {
     single<PromptDraftStore> { InMemoryPromptDraftStore() }
 
-    single<SettingsStore> { DataStoreSettingsStore(settingsDirPath(platformContext)) }
+    single<SettingsStore> { DataStoreSettingsStore(settingsFilePath(platformContext)) }
 
     single {
         NovelAIApiServiceImpl(
@@ -82,6 +88,10 @@ fun appModule(platformContext: Any?): Module = module {
 
     single<AppDatabase> { databaseBuilder(platformContext).build() }
     single<ImageDao> { get<AppDatabase>().imageDao() }
+
+    single<ImageFileStorage> { imageFileStorage(platformContext) }
+    single<ImageRepository> { ImageRepositoryImpl(get(), get()) }
+    single<GenerationRepository> { GenerationRepositoryImpl(get(), get(), get()) }
 
     viewModelOf(::WorkbenchViewModel)
     viewModelOf(::GalleryViewModel)

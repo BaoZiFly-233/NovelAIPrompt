@@ -34,7 +34,7 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
-import com.novelstudio.core.database.ImageEntity
+import com.novelstudio.core.model.ImageRecord
 import com.novelstudio.core.designsystem.theme.MD3EPillShape
 import kotlin.math.roundToInt
 
@@ -45,8 +45,8 @@ import kotlin.math.roundToInt
 @Composable
 fun CompareScreen(viewModel: CompareViewModel, modifier: Modifier = Modifier) {
     val records by viewModel.records.collectAsStateWithLifecycle()
-    var left by remember { mutableStateOf<ImageEntity?>(null) }
-    var right by remember { mutableStateOf<ImageEntity?>(null) }
+    var left by remember { mutableStateOf<ImageRecord?>(null) }
+    var right by remember { mutableStateOf<ImageRecord?>(null) }
 
     Column(modifier = modifier.fillMaxSize().padding(20.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
         Text("对比实验室", style = MaterialTheme.typography.headlineMedium)
@@ -77,7 +77,7 @@ fun CompareScreen(viewModel: CompareViewModel, modifier: Modifier = Modifier) {
 }
 
 @Composable
-private fun RecordPicker(records: List<ImageEntity>, selected: ImageEntity?, onSelect: (ImageEntity) -> Unit) {
+private fun RecordPicker(records: List<ImageRecord>, selected: ImageRecord?, onSelect: (ImageRecord) -> Unit) {
     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
         records.take(8).forEach { record ->
             FilterChip(
