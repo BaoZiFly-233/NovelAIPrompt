@@ -1,5 +1,15 @@
-chore: 初始化 MD3E 原生客户端工程骨架与构建系统
+feat: 实现核心数据与网络层 (阶段1)：V5 领域模型、Opus 算力套利、PNG 元数据与 Room 持久化
 
-搭建 Kotlin Multiplatform + Compose Multiplatform 1.12.0 / Kotlin 2.3.21 / AGP 9.3 的根工程：settings.gradle.kts 注册 composeApp、androidApp、五个 core 模块与五个 feature 模块共 12 个子工程；version catalog (gradle/libs.versions.toml) 统一管理 Ktor、Coil 3、Koin、Room KMP、DataStore、Okio 等依赖版本，全部选自 2026-09 当前稳定线；gradlew/gradlew.bat 内置 GRADLE_USER_HOME=D:\DevCaches\gradle 与 JAVA_HOME=D:\DevTools\jdk-17 默认值，确保依赖与工具链强制落盘 D 盘；同时收录四大技术规约文档（架构、NAI V5 协议、MD3E 设计、路线图）与含构建指南的 README，为后续分阶段实现提供单一事实来源。
+落地 core:* 五个模块的完整 commonMain 领域与基础设施代码：core:model 定义 NovelAI Diffusion
+V5/V4.5 双轨模型枚举、22 角色定位画板的 V5Character（归一化坐标约束）、GenerationParameters
+完整 payload 参数集与 ImageRecord/PromptDraft 等实体；core:network 实现 Ktor + OkHttp 引擎的
+NovelAIApiService（generate-image ZIP/PNG 二进制流自动解包、订阅档位与 V5 充能电池解析）、
+OpusFreeCalculator 免费像素钳位算法（1024² 面积与 28 步双重判定、64 网格对齐）以及
+SmartDispatcher 智能双轨路由状态机（显式 V5/探索抽卡两种模式、Anlas 确认与 V4.5 无限池降级）；
+core:common 基于 Okio 实现零拷贝 PNG tEXt Chunk 解析器（IHDR 尺寸 + NAI Comment 元数据 JSON）、
+Danbooru Tag Trie 联想树与支持下划线分段通配符名的 WildcardEngine；core:database 搭建 Room KMP
+2.8.4（KSP 编译期生成，Android/桌面双平台 databaseBuilder 收口）含 ImageEntity/ImageDao 响应式查询；
+core:designsystem 落地 MD3E 表现力主题（深浅双色板、药丸 Shape、表达力字阶）与 MD3EMotion 弹簧
+物理三预设；以上算法与解析器均配备 jvmTest 单元测试并全部通过。
 
 Co-authored-by: CommandCodeBot <noreply@commandcode.ai>
