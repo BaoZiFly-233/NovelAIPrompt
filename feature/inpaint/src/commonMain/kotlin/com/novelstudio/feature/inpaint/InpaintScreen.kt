@@ -36,8 +36,8 @@ import com.novelstudio.core.designsystem.theme.MD3EPillShape
 import com.novelstudio.feature.inpaint.InpaintViewModel
 
 /**
- * Skia 原生局部重绘涂抹画板（对应 feature:inpaint）：
- * 在选中图片上方叠加半透明遮罩笔迹，笔刷大小可调，遮罩可清空/导出（导出落盘待 Task 2.4 管道）。
+ * Skia 原生局部重绘涂抹画板：
+ * 在选中图片上方叠加半透明遮罩笔迹，笔刷大小可调，遮罩可清空或导出（导出落盘能力尚未接入）。
  */
 @Composable
 fun InpaintScreen(viewModel: InpaintViewModel, modifier: Modifier = Modifier) {
@@ -120,7 +120,7 @@ fun InpaintScreen(viewModel: InpaintViewModel, modifier: Modifier = Modifier) {
                         message = if (strokes.isEmpty()) {
                             "遮罩为空"
                         } else {
-                            "已暂存 ${strokes.size} 笔遮罩（导出落盘管道将在 Task 2.4 接入）"
+                            "已暂存 ${strokes.size} 笔遮罩（导出功能即将上线）"
                         }
                     },
                     shape = MD3EPillShape,

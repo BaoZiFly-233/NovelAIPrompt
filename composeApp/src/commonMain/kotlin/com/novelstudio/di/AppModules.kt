@@ -71,7 +71,7 @@ private fun createHttpClient(): HttpClient = HttpClient(platformHttpEngine()) {
 }
 
 /**
- * 应用依赖图谱（Task 0.3）：
+ * 应用依赖图谱：
  * 平台上下文由各端入口传入（Android=applicationContext，Desktop=null）。
  */
 fun appModule(platformContext: Any?): Module = module {

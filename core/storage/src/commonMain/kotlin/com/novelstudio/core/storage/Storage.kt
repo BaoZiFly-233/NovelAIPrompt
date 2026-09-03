@@ -1,7 +1,7 @@
 package com.novelstudio.core.storage
 
 /**
- * 图片文件存储管道契约（Task 2.4 落地）：
+ * 图片文件存储管道契约：
  * 原图 PNG 落盘 + WebP 缩略图（256px）+ BlurHash 主色占位串一次生成。
  */
 data class StoredImage(
