@@ -4,24 +4,31 @@
 
 ---
 
-## 阶段 0：工程骨架与基础依赖配置 (P0 - Foundation)
+## 阶段 0：工程骨架与基础依赖配置 (P0 - Foundation) ✅ 已完成
 
-- [ ] **Task 0.1**: 初始化 Kotlin Multiplatform 根工程 (`build.gradle.kts`, `settings.gradle.kts`)，配置 Compose Multiplatform 插件。
-- [ ] **Task 0.2**: 创建子模块架构 (`core:model`, `core:network`, `core:database`, `core:designsystem`, `core:common`, `composeApp`)。
-- [ ] **Task 0.3**: 配置 Koin 依赖注入图谱，初始化 DataStore 密钥安全存储 (Token/Preferences)。
-- [ ] **Task 0.4**: 实现 `core:designsystem` 中的 MD3E 调色板、Typography、Shape 与 `MD3EMotion` 弹簧物理预设。
+- [x] **Task 0.1**: 初始化 Kotlin Multiplatform 根工程 (`build.gradle.kts`, `settings.gradle.kts`)，配置 Compose Multiplatform 插件。
+- [x] **Task 0.2**: 创建子模块架构 (`core:model`, `core:network`, `core:database`, `core:designsystem`, `core:common`, `composeApp`)。
+- [x] **Task 0.3**: 配置 Koin 依赖注入图谱，初始化 DataStore 密钥安全存储 (Token/Preferences)。
+- [x] **Task 0.4**: 实现 `core:designsystem` 中的 MD3E 调色板、Typography、Shape 与 `MD3EMotion` 弹簧物理预设。
+
+> 实施备注：Kotlin 2.3.21 + CMP 1.12.0 + AGP 9.3 组合下，KMP 模块 Android 目标采用官方
+> `com.android.kotlin.multiplatform.library` 插件；Android APK 入口拆分为独立薄壳模块
+> `androidApp`（AGP 9 移除了 KMP 场景下的 application 插件）。
 
 ---
 
-## 阶段 1：网络适配与 NovelAI V5 领域模型 (P1 - Core Data & Network)
+## 阶段 1：网络适配与 NovelAI V5 领域模型 (P1 - Core Data & Network) ✅ 已完成
 
-- [ ] **Task 1.1**: 基于 Ktor Client 实现 `NovelAIApiService`：
+- [x] **Task 1.1**: 基于 Ktor Client 实现 `NovelAIApiService`：
   - `POST /ai/generate-image` (处理 Zip/PNG 二进制流响应)
   - `GET /user/subscription` (拉取订阅档位与 Anlas)
   - `GET /user/data` (解析 V5 Opus 充能电池百分比)
-- [ ] **Task 1.2**: 编写 `OpusFreeCalculator` (免费像素面积钳位与步数自适应校验算法)。
-- [ ] **Task 1.3**: 基于 Okio 编写 `PngChunkParser`，实现零拷贝提取 PNG 内 `tEXt:Comment` 生成元数据。
-- [ ] **Task 1.4**: 构建 `core:database` Room KMP 数据库，创建 `ImageEntity` 与 `ImageDao`。
+- [x] **Task 1.2**: 编写 `OpusFreeCalculator` (免费像素面积钳位与步数自适应校验算法)。
+- [x] **Task 1.3**: 基于 Okio 编写 `PngChunkParser`，实现零拷贝提取 PNG 内 `tEXt:Comment` 生成元数据。
+- [x] **Task 1.4**: 构建 `core:database` Room KMP 数据库，创建 `ImageEntity` 与 `ImageDao`。
+
+> 附带产出：`SmartDispatcher` 智能双轨路由状态机、`TagTrie` Danbooru 联想树、
+> `WildcardEngine` 通配符引擎、`PromptDraftStore` 图库回填契约；全部附 jvmTest 单元测试。
 
 ---
 
