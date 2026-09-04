@@ -26,5 +26,19 @@ kotlin {
             api(libs.compose.material.icons.extended)
             api(compose.ui)
         }
+        androidMain.dependencies {
+            api(libs.androidx.graphics.shapes)
+        }
+        jvmMain.dependencies {
+            api(libs.androidx.graphics.shapes)
+        }
+    }
+}
+
+kotlin {
+    sourceSets.all {
+        languageSettings {
+            optIn("androidx.compose.material3.ExperimentalMaterial3ExpressiveApi")
+        }
     }
 }

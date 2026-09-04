@@ -21,6 +21,7 @@ jbLifecycle = "2.10.0"
 activityCompose = "1.11.0"
 baselineProfile = "1.4.1"
 benchmark = "1.4.1"
+graphicsShapes = "1.0.1"
 
 # Android baseline
 androidMinSdk = "24"
@@ -79,6 +80,7 @@ jb-lifecycle-runtime-compose = { module = "org.jetbrains.androidx.lifecycle:life
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "activityCompose" }
 androidx-profileinstaller = { module = "androidx.profileinstaller:profileinstaller", version.ref = "baselineProfile" }
 androidx-benchmark-macro = { module = "androidx.benchmark:benchmark-macro-junit4", version.ref = "benchmark" }
+androidx-graphics-shapes = { module = "androidx.graphics:graphics-shapes", version.ref = "graphicsShapes" }
 
 [plugins]
 kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }

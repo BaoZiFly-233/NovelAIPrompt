@@ -1,34 +1,29 @@
-@file:Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
-
 package com.novelstudio.core.designsystem.theme
 
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.animation.core.AnimationSpec
-import androidx.compose.material3.MaterialExpressiveTheme
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Shapes
 import androidx.compose.material3.Typography
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
-/** 工作台 Shape 层级：容器与控件保持明确的轮廓差异。 */
-val MD3EShapes = Shapes(
-    extraSmall = RoundedCornerShape(4.dp),
-    small = RoundedCornerShape(8.dp),
-    medium = RoundedCornerShape(12.dp),
-    large = RoundedCornerShape(16.dp),
-    extraLarge = RoundedCornerShape(24.dp),
-)
+/**
+ * MD3E 药丸形状：完全圆角（用于 Chip、SegmentedButton）
+ */
+val MD3EPillShape: Shape = RoundedCornerShape(999.dp)
 
-/** 药丸型仅用于 Chip、状态徽标与分段选择。 */
-val MD3EPillShape: Shape = RoundedCornerShape(percent = 50)
-
-/** 为中文生产力界面校准的紧凑字号与行高体系。 */
+/**
+ * 为中文生产力界面校准的紧凑字号与行高体系
+ *
+ * 相比默认 M3 Typography：
+ * - Display 系列减小 8sp（中文标题无需过大）
+ * - Body 系列行高收紧 2sp（提高信息密度）
+ * - Label 系列统一 Medium 字重（界面控件可读性）
+ */
 val MD3ETypography = Typography(
     displayLarge = TextStyle(fontSize = 48.sp, lineHeight = 56.sp, fontWeight = FontWeight.SemiBold),
     displayMedium = TextStyle(fontSize = 40.sp, lineHeight = 48.sp, fontWeight = FontWeight.SemiBold),
@@ -46,28 +41,31 @@ val MD3ETypography = Typography(
     labelSmall = TextStyle(fontSize = 11.sp, fontWeight = FontWeight.Medium, letterSpacing = 0.5.sp),
 )
 
-/** MD3E 主题入口：深浅色 scheme + 表现力 Typography/Shape */
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+/**
+ * MD3E 主题入口：深浅色 scheme + 表现力 Typography
+ *
+ * 注：CMP 1.12.0 的 MaterialExpressiveTheme 标记为 internal，
+ * 暂时使用标准 MaterialTheme + 自定义 Typography + Motion 规格
+ */
 @Composable
 fun MD3ETheme(
     darkTheme: Boolean = false,
     content: @Composable () -> Unit,
 ) {
-    MaterialExpressiveTheme(
+    MaterialTheme(
         colorScheme = if (darkTheme) studioDarkColorScheme() else studioLightColorScheme(),
+        shapes = Shapes(),
         typography = MD3ETypography,
-        shapes = MD3EShapes,
         content = content,
     )
 }
 
-/** 将 Material 3 Expressive 的运动语义集中在设计系统，避免业务模块依赖内部 API。 */
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+/**
+ * 慢速空间动画规格（向后兼容）
+ *
+ * 等效于 MD3EMotion.slowSpatial()，用于需要 @Composable 上下文的场景
+ */
 @Composable
-fun <T> expressiveSlowSpatialSpec(): AnimationSpec<T> =
-    MaterialTheme.motionScheme.slowSpatialSpec()
+fun <T> expressiveSlowSpatialSpec(): androidx.compose.animation.core.FiniteAnimationSpec<T> =
+    com.novelstudio.core.designsystem.motion.MD3EMotion.slowSpatial()
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
-@Composable
-fun <T> expressiveFastSpatialSpec(): AnimationSpec<T> =
-    MaterialTheme.motionScheme.fastSpatialSpec()
