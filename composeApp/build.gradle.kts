@@ -1,4 +1,5 @@
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
+import org.gradle.api.tasks.bundling.Zip
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
@@ -47,7 +48,12 @@ kotlin {
             implementation(libs.ktor.serialization.json)
         }
         jvmMain.dependencies {
+            implementation(compose.desktop.currentOs)
             implementation(libs.coil.network.okhttp)
+            implementation(libs.coroutines.swing)
+        }
+        commonTest.dependencies {
+            implementation(kotlin("test"))
         }
     }
 }
@@ -60,10 +66,24 @@ compose.desktop {
             targetFormats(TargetFormat.Msi, TargetFormat.Exe)
             packageName = "NovelAIDiffusionStudio"
             packageVersion = "0.1.0"
+            description = "NovelAI Diffusion Studio"
+            vendor = "Novel Studio"
             windows {
                 menu = true
                 shortcut = true
             }
         }
     }
+}
+
+// Windows 便携版：打包 createDistributable 生成的应用镜像，包含启动器、运行时和应用文件。
+tasks.register<Zip>("packagePortableZip") {
+    dependsOn("createDistributable")
+    val appImage = layout.buildDirectory.dir("compose/binaries/main/app/NovelAIDiffusionStudio")
+    from(appImage)
+    into("NovelAIDiffusionStudio")
+    // 此项目未统一设置 Gradle project.version，使用发行包版本避免生成 unspecified 文件名。
+    archiveFileName.set("NovelAIDiffusionStudio-0.1.0-windows-portable.zip")
+    destinationDirectory.set(layout.buildDirectory.dir("compose/binaries/main/portableZip"))
+    includeEmptyDirs = false
 }
