@@ -21,11 +21,18 @@ kotlin {
             api(project(":core:designsystem"))
             implementation(project(":core:data"))
             implementation(libs.coil.compose)
+            implementation(libs.paging.compose)
             implementation(libs.koin.core)
             implementation(libs.koin.compose)
             implementation(libs.koin.compose.viewmodel)
             implementation(libs.coroutines.core)
             implementation(libs.jb.lifecycle.runtime.compose)
+        }
+        commonTest.dependencies {
+            implementation(kotlin("test"))
+        }
+        androidMain.dependencies {
+            implementation(libs.androidx.activity.compose)
         }
     }
 }

@@ -19,6 +19,7 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             api(project(":core:designsystem"))
+            implementation(project(":core:common"))
             implementation(project(":core:data"))
             implementation(libs.koin.core)
             implementation(libs.koin.compose)
@@ -29,6 +30,9 @@ kotlin {
         commonTest.dependencies {
             implementation(kotlin("test"))
             implementation(libs.coroutines.test)
+        }
+        androidMain.dependencies {
+            implementation(libs.androidx.activity.compose)
         }
     }
 }

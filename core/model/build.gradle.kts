@@ -19,5 +19,8 @@ kotlin {
         commonMain.dependencies {
             api(libs.serialization.json)
         }
+        commonTest.dependencies {
+            implementation(kotlin("test"))
+        }
     }
 }

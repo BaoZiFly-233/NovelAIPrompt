@@ -30,6 +30,7 @@ rootProject.name = "NovelAIPrompt"
 
 include(":composeApp")
 include(":androidApp")
+include(":baselineprofile")
 include(":core:model")
 include(":core:common")
 include(":core:storage")

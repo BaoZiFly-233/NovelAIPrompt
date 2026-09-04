@@ -1,5 +1,6 @@
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
+    alias(libs.plugins.kotlinSerialization)
     alias(libs.plugins.androidKmpLibrary)
 }
 
@@ -20,8 +21,10 @@ kotlin {
             api(project(":core:common"))
             api(project(":core:storage"))
             api(project(":core:network"))
+            api(libs.paging.common)
             implementation(project(":core:database"))
             implementation(libs.coroutines.core)
+            implementation(libs.serialization.json)
         }
         commonTest.dependencies {
             implementation(kotlin("test"))

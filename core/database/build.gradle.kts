@@ -19,11 +19,16 @@ kotlin {
         commonMain.dependencies {
             implementation(project(":core:model"))
             api(libs.room.runtime)
+            api(libs.room.paging)
+            implementation(libs.sqlite.bundled)
             implementation(libs.coroutines.core)
         }
         androidMain.dependencies {
             // room-ktx 仅提供 Android 变体（AAR），协程事务等能力在 JVM 端由 room-runtime 提供
             implementation(libs.room.ktx)
+        }
+        commonTest.dependencies {
+            implementation(kotlin("test"))
         }
     }
 }

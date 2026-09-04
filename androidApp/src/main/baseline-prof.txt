@@ -1,0 +1,6 @@
+Lcom/novelstudio/app/android/MainActivity;
+Lcom/novelstudio/app/android/StudioApplication;
+HSPLcom/novelstudio/app/android/MainActivity;-><init>()V
+HSPLcom/novelstudio/app/android/MainActivity;->onCreate(Landroid/os/Bundle;)V
+HSPLcom/novelstudio/app/android/StudioApplication;-><init>()V
+HSPLcom/novelstudio/app/android/StudioApplication;->onCreate()V

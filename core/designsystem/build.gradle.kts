@@ -22,6 +22,7 @@ kotlin {
             api(compose.runtime)
             api(compose.foundation)
             api(compose.material3)
+            api(libs.compose.material.icons.core)
             api(compose.ui)
         }
     }

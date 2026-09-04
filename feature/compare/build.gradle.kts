@@ -27,5 +27,8 @@ kotlin {
             implementation(libs.coroutines.core)
             implementation(libs.jb.lifecycle.runtime.compose)
         }
+        commonTest.dependencies {
+            implementation(kotlin("test"))
+        }
     }
 }

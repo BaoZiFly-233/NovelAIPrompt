@@ -18,6 +18,23 @@ android {
     buildFeatures {
         compose = true
     }
+
+    buildTypes {
+        release {
+            isMinifyEnabled = true
+            isShrinkResources = true
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro",
+            )
+        }
+        create("benchmark") {
+            initWith(getByName("release"))
+            signingConfig = signingConfigs.getByName("debug")
+            matchingFallbacks += listOf("release")
+        }
+    }
+
 }
 
 dependencies {
@@ -27,4 +44,5 @@ dependencies {
     implementation(libs.coroutines.core)
     implementation(libs.coil.compose)
     implementation(libs.okio)
+    implementation(libs.androidx.profileinstaller)
 }
