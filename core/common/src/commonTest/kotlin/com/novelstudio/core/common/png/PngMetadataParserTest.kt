@@ -5,8 +5,10 @@ import okio.Buffer
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
+import kotlin.test.assertFalse
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
+import kotlin.test.assertTrue
 
 class PngMetadataParserTest {
 
@@ -25,6 +27,7 @@ class PngMetadataParserTest {
 
         assertEquals(320, info.width)
         assertEquals(240, info.height)
+        assertTrue(info.hasTransparency)
         assertEquals("NovelAI", info.textChunks["Software"])
 
         val metadata = assertNotNull(info.naiMetadata)
@@ -69,6 +72,25 @@ class PngMetadataParserTest {
         assertEquals(64, info.width)
     }
 
+    @Test
+    fun `detects tRNS transparency on non alpha color type`() {
+        val png = Buffer()
+            .writeSignature()
+            .writeChunk("IHDR", ihdr(width = 64, height = 64, colorType = 2))
+            .writeChunk("tRNS", byteArrayOf(0, 0, 0, 0, 0, 0))
+            .writeChunk("IEND", ByteArray(0))
+            .readByteArray()
+
+        assertTrue(PngMetadataParser.parse(Buffer().apply { write(png) }).hasTransparency)
+
+        val opaque = Buffer()
+            .writeSignature()
+            .writeChunk("IHDR", ihdr(width = 64, height = 64, colorType = 2))
+            .writeChunk("IEND", ByteArray(0))
+            .readByteArray()
+        assertFalse(PngMetadataParser.parse(Buffer().apply { write(opaque) }).hasTransparency)
+    }
+
     // ---------- 测试用 PNG 构造工具 ----------
 
     private fun Buffer.writeSignature(): Buffer = write(byteArrayOf(0x89.toByte(), 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A))
@@ -81,12 +103,12 @@ class PngMetadataParserTest {
         return this
     }
 
-    private fun ihdr(width: Int, height: Int): ByteArray = Buffer()
+    private fun ihdr(width: Int, height: Int, colorType: Int = 6): ByteArray = Buffer()
         .apply {
             writeInt(width)
             writeInt(height)
             writeByte(8)  // bit depth
-            writeByte(6)  // RGBA
+            writeByte(colorType)
             writeByte(0)  // compression
             writeByte(0)  // filter
             writeByte(0)  // interlace
