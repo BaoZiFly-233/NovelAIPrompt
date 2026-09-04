@@ -65,12 +65,31 @@ compose.desktop {
         nativeDistributions {
             targetFormats(TargetFormat.Msi, TargetFormat.Exe)
             packageName = "NovelAIDiffusionStudio"
-            packageVersion = "0.1.0"
+            // 允许 CI 通过 -PpackageVersion=x.y.z 覆盖
+            packageVersion = (project.findProperty("packageVersion") as? String)?.trimStart('v') ?: "0.1.0"
             description = "NovelAI Diffusion Studio"
             vendor = "Novel Studio"
+
+            // jlink 模块裁剪：只打包应用实际需要的 Java 模块，把运行时从 ~300MB 压到 ~60MB
+            modules(
+                "java.base",
+                "java.desktop",       // Compose Desktop / Swing
+                "java.management",    // JMX，Kotlin 运行时需要
+                "java.net.http",      // OkHttp / Ktor HTTP client
+                "java.prefs",         // DataStore Preferences
+                "java.sql",           // JDBC / Room SQLite
+                "java.xml",           // XML 解析
+                "jdk.crypto.ec",      // EC 密钥交换，HTTPS/TLS 必需
+                "jdk.crypto.cryptoki",// PKCS11 加密
+                "jdk.security.auth",  // 身份验证
+                "jdk.unsupported",    // sun.misc.Unsafe，OkHttp / Coroutines 需要
+            )
+
             windows {
                 menu = true
                 shortcut = true
+                // upgradeUuid 固定不变，MSI 升级安装时会复用此 UUID 而非并排安装
+                upgradeUuid = "B4C1F3E2-7D9A-4F1B-A832-5C6E8D2A0F74"
             }
         }
     }
