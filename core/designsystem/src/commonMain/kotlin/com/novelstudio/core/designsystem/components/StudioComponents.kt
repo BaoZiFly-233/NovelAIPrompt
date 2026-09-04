@@ -44,7 +44,7 @@ object StudioSpacing {
 @Composable
 fun StudioPageHeader(
     title: String,
-    description: String,
+    description: String = "",
     modifier: Modifier = Modifier,
     eyebrow: String? = null,
     actions: @Composable RowScope.() -> Unit = {},
@@ -53,7 +53,9 @@ fun StudioPageHeader(
         Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(StudioSpacing.Small)) {
             eyebrow?.let { Text(it.uppercase(), style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.primary) }
             Text(title, style = MaterialTheme.typography.headlineSmall)
-            Text(description, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            if (description.isNotBlank()) {
+                Text(description, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            }
         }
         Row(horizontalArrangement = Arrangement.spacedBy(StudioSpacing.Small), content = actions)
     }

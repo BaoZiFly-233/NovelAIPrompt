@@ -107,7 +107,6 @@ fun WorkbenchScreen(viewModel: WorkbenchViewModel, modifier: Modifier = Modifier
     val promptComposer: @Composable () -> Unit = {
         StudioSection(
             title = "提示词",
-            description = "正向描述决定画面，负向描述用于排除不需要的内容。",
         ) {
             AssetComposer(
                 state = state,
@@ -190,8 +189,7 @@ fun WorkbenchScreen(viewModel: WorkbenchViewModel, modifier: Modifier = Modifier
             modifier = Modifier.fillMaxSize(),
         ) {
             StudioPageHeader(
-                title = "智能工作台",
-                description = "让提示词、参考图和参数围绕预览组织，而不是堆成一张设置表。",
+                title = "工作台",
                 eyebrow = "NOVELAI STUDIO",
                 modifier = Modifier.padding(start = pagePadding, end = pagePadding, top = StudioSpacing.Large),
                 actions = {

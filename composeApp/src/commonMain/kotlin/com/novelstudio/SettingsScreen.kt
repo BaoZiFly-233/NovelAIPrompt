@@ -103,12 +103,10 @@ fun SettingsScreen(modifier: Modifier = Modifier) {
             StudioPageHeader(
                 eyebrow = "PREFERENCES",
                 title = "设置",
-                description = "管理连接、隐私与诊断信息。",
             )
 
             StudioSection(
                 title = "NovelAI 连接",
-                description = "凭证只保存在这台设备上，不会写入图库、备份或诊断日志。",
             ) {
                 if (!loaded) {
                     // 加载中显示骨架屏，避免空串闪烁
@@ -182,10 +180,9 @@ fun SettingsScreen(modifier: Modifier = Modifier) {
 
             StudioSection(
                 title = "隐私说明",
-                description = "客户端直接连接 NovelAI，不经过中转服务器。",
             ) {
                 Text(
-                    "生成参数和图片记录保存在本地；导出备份时也不会包含 API Token。",
+                    "客户端直接连接 NovelAI，不经过中转服务器。生成参数和图片记录保存在本地。",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )

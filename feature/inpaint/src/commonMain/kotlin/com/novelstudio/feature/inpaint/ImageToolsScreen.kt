@@ -98,7 +98,6 @@ fun ImageToolsScreen(
             StudioPageHeader(
                 eyebrow = "DERIVE",
                 title = "图像工具",
-                description = "每次点击只提交一次请求；结果会作为新作品保存，绝不覆盖原图。",
                 modifier = Modifier.weight(1f),
             )
         }
@@ -119,7 +118,7 @@ fun ImageToolsScreen(
                 state.message?.let { Notice(it, false, viewModel::clearNotice) }
                 state.error?.let { Notice(it, true, viewModel::clearNotice) }
 
-                StudioSection(title = "创作派生", description = "Img2Img、Enhance 与 Inpaint 共享当前 Prompt，但参数互不自动改写。") {
+                StudioSection(title = "创作派生") {
                     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                         OutlinedTextField(
                             value = state.prompt,
@@ -155,13 +154,8 @@ fun ImageToolsScreen(
                         )
                         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                             Button(onClick = viewModel::requestImg2Img, enabled = !state.running) { Text("Img2Img") }
-                            Button(onClick = pickMask, enabled = !state.running) { Text("选择 PNG 遮罩并 Inpaint") }
+                            Button(onClick = pickMask, enabled = !state.running) { Text("Inpaint") }
                         }
-                        Text(
-                            "Inpaint 仅接受与原图同尺寸、非空的 PNG 遮罩；当前模型无已确认的 inpainting 变体时会在提交前阻止。",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        )
                         StudioParameterSlider(
                             label = "Enhance 输出缩放",
                             value = (state.enhanceScale - 1f) / 3f,
@@ -171,11 +165,11 @@ fun ImageToolsScreen(
                             minLabel = "1×",
                             maxLabel = "4×",
                         )
-                        Button(onClick = viewModel::requestEnhance, enabled = !state.running) { Text("Enhance（固定单张）") }
+                        Button(onClick = viewModel::requestEnhance, enabled = !state.running) { Text("Enhance") }
                     }
                 }
 
-                StudioSection(title = "无创作放大", description = "独立调用 /ai/upscale，不混用 Enhance 参数。") {
+                StudioSection(title = "Upscale") {
                     Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
                         Text("Declared blur sigma")
                         FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -191,7 +185,7 @@ fun ImageToolsScreen(
                     }
                 }
 
-                StudioSection(title = "Director Tools", description = "Remove BG、Line Art、Sketch、Colorize、Emotion、Declutter。") {
+                StudioSection(title = "Director Tools") {
                     Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
                         OutlinedTextField(
                             value = state.directorPrompt,

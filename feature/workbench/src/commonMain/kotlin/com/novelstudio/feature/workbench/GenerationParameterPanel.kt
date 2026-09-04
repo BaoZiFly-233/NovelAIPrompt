@@ -64,8 +64,7 @@ internal fun GenerationParameterPanel(
     val withinNormalAllowance = OpusFreeCalculator.isFreeGeneration(state.width, state.height, state.steps) &&
         state.nSamples == 1 && state.vibeReferences.size <= 4
 
-    StudioSection("生成参数", modifier = modifier,
-        description = "常用参数直接调整，高级选项按需展开。") {
+    StudioSection("生成参数", modifier = modifier) {
         Column(
             modifier = Modifier,
             verticalArrangement = Arrangement.spacedBy(12.dp),
@@ -117,7 +116,7 @@ internal fun GenerationParameterPanel(
                 maxLabel = "10",
             )
 
-            Text("单次请求张数", style = MaterialTheme.typography.titleSmall)
+            Text("单次张数", style = MaterialTheme.typography.titleSmall)
             ScrollablePillRow {
                 (1..6).forEach { count ->
                     SelectablePill(
@@ -127,11 +126,6 @@ internal fun GenerationParameterPanel(
                     )
                 }
             }
-            Text(
-                "多图仍只提交一次生成请求；实际张数上限还取决于分辨率。",
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
 
             Column(
                 modifier = Modifier.fillMaxWidth(),
