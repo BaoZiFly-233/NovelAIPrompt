@@ -1,6 +1,7 @@
 package com.novelstudio.feature.workbench
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -164,8 +165,8 @@ internal fun GenerationParameterPanel(
 
             AnimatedVisibility(
                 visible = advancedExpanded,
-                enter = expandVertically(animationSpec = MD3EMotion.ExpandSpring) + fadeIn(MD3EMotion.StandardEasing),
-                exit = shrinkVertically(animationSpec = MD3EMotion.ExpandSpring) + fadeOut(MD3EMotion.StandardEasing),
+                enter = expandVertically(animationSpec = spring(dampingRatio = 1.0f, stiffness = 200f)) + fadeIn(MD3EMotion.StandardEasing),
+                exit = shrinkVertically(animationSpec = spring(dampingRatio = 1.0f, stiffness = 200f)) + fadeOut(MD3EMotion.StandardEasing),
             ) {
                 Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                     Text("采样器", style = MaterialTheme.typography.titleSmall)

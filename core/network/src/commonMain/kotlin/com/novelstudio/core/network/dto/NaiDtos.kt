@@ -34,7 +34,6 @@ data class ImageParametersPayload(
     @SerialName("legacy") val legacy: Boolean = false,
     @SerialName("add_original_image") val addOriginalImage: Boolean = true,
     @SerialName("controlnet_strength") val controlnetStrength: Float = 1.0f,
-    @SerialName("dynamic_thresholding") val dynamicThresholding: Boolean = false,
     @SerialName("v4_prompt") val v4Prompt: CharacterConditionPayload? = null,
     @SerialName("v4_negative_prompt") val v4NegativePrompt: CharacterConditionPayload? = null,
     @SerialName("reference_image_multiple") val referenceImageMultiple: List<String>? = null,

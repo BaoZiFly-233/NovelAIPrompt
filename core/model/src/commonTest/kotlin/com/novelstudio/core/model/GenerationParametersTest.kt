@@ -91,6 +91,7 @@ class GenerationParametersTest {
     fun `inpaint requires source mask matching size and a confirmed model variant`() {
         val source = GenerationInputImage(byteArrayOf(1), 1024, 1024, "image/png")
         val mask = GenerationInputImage(byteArrayOf(2), 1024, 1024, "image/png")
+        // V4_5_FULL 和 V5_FULL 均有已确认的 inpaintingModelId，两者都应成功构造
         GenerationParameters(
             model = NaiModel.V4_5_FULL,
             action = GenerationAction.INFILL,
@@ -99,16 +100,14 @@ class GenerationParametersTest {
             sourceImage = source,
             maskImage = mask,
         )
-        assertFailsWith<IllegalArgumentException> {
-            GenerationParameters(
-                model = NaiModel.V5_FULL,
-                action = GenerationAction.INFILL,
-                operation = ImageOperation.INPAINT,
-                parentImageId = "parent",
-                sourceImage = source,
-                maskImage = mask,
-            )
-        }
+        GenerationParameters(
+            model = NaiModel.V5_FULL,
+            action = GenerationAction.INFILL,
+            operation = ImageOperation.INPAINT,
+            parentImageId = "parent",
+            sourceImage = source,
+            maskImage = mask,
+        )
         assertFailsWith<IllegalArgumentException> {
             GenerationParameters(
                 model = NaiModel.V4_5_FULL,

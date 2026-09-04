@@ -28,6 +28,7 @@ import androidx.compose.material3.NavigationRailItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.Surface
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -140,14 +141,14 @@ private fun MainShell(titleBar: @Composable () -> Unit, navigationShortcut: Navi
                 enterTransition = {
                     slideIntoContainer(
                         towards = androidx.compose.animation.AnimatedContentTransitionScope.SlideDirection.Start,
-                        animationSpec = MD3EMotion.GentleSpring,
+                        animationSpec = androidx.compose.animation.core.spring(dampingRatio = 1.0f, stiffness = 200f),
                     ) + fadeIn(MD3EMotion.StandardEasing)
                 },
                 exitTransition = { fadeOut(MD3EMotion.StandardEasing) },
                 popEnterTransition = {
                     slideIntoContainer(
                         towards = androidx.compose.animation.AnimatedContentTransitionScope.SlideDirection.End,
-                        animationSpec = MD3EMotion.GentleSpring,
+                        animationSpec = androidx.compose.animation.core.spring(dampingRatio = 1.0f, stiffness = 200f),
                     ) + fadeIn(MD3EMotion.StandardEasing)
                 },
                 popExitTransition = { fadeOut(MD3EMotion.StandardEasing) },

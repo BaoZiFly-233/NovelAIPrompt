@@ -408,7 +408,7 @@ internal fun parseSseGenerationEvent(eventName: String?, data: String, json: Jso
     }
     if (images.isEmpty()) {
         // 服务端返回了帧但帧内容无效（区别于网络中断），submissionMayHaveCompleted=false 允许上层判断
-        return GenerationEvent.Failure("SSE 图像帧没有有效 PNG/WebP 内容", submissionMayHaveCompleted = false)
+        return GenerationEvent.Failure("SSE 图像帧没有有效 PNG/WebP 内容")
     }
     return if (type.contains("intermediate") || type.contains("preview")) {
         val first = images.first()

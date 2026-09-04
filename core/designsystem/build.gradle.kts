@@ -23,6 +23,7 @@ kotlin {
             api(compose.foundation)
             api(compose.material3)
             api(libs.compose.material.icons.core)
+            api(libs.compose.material.icons.extended)
             api(compose.ui)
         }
     }

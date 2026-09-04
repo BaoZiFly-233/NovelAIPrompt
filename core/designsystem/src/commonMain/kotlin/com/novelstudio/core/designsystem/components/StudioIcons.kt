@@ -6,6 +6,7 @@ import androidx.compose.material.icons.rounded.AutoAwesome
 import androidx.compose.material.icons.rounded.Bolt
 import androidx.compose.material.icons.rounded.CallSplit
 import androidx.compose.material.icons.rounded.CheckCircle
+import androidx.compose.material.icons.rounded.CompareArrows
 import androidx.compose.material.icons.rounded.DragHandle
 import androidx.compose.material.icons.rounded.Error
 import androidx.compose.material.icons.rounded.Info
@@ -51,4 +52,7 @@ object StudioIcons {
 
     /** 撤销操作：SwipeScreen 撤销上一张。 */
     val Undo = Icons.AutoMirrored.Rounded.Undo
+
+    /** 对比导航：CompareScreen 空态图标。 */
+    val CompareArrows = Icons.Rounded.CompareArrows
 }

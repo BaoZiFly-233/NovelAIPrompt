@@ -1,0 +1,8 @@
+# 全局默认：所有 PR 需要 BaoZiFly-233 审核
+* @BaoZiFly-233
+
+# 设计系统变更需额外关注
+core/designsystem/ @BaoZiFly-233
+
+# 网络/API 层变更需额外关注
+core/network/ @BaoZiFly-233

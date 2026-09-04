@@ -17,9 +17,13 @@ import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.Star
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FilterChip
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -148,7 +152,8 @@ fun ImageToolsScreen(
                             displayValue = displayDecimal(state.noise),
                             minLabel = "0",
                             maxLabel = "1",
-                        )                        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        )
+                        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                             Button(onClick = viewModel::requestImg2Img, enabled = !state.running) { Text("Img2Img") }
                             Button(onClick = pickMask, enabled = !state.running) { Text("选择 PNG 遮罩并 Inpaint") }
                         }
@@ -264,4 +269,4 @@ private fun DirectorTool.label(): String = when (this) {
     DirectorTool.DECLUTTER -> "Declutter"
 }
 
-private fun displayDecimal(value: Float): Float = (value * 100f).roundToInt() / 100f
+private fun displayDecimal(value: Float): String = "%.2f".format(value)

@@ -34,7 +34,6 @@ import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.drawscope.DrawScope
-import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
@@ -47,7 +46,7 @@ private val MASK_COLOR = Color(0xAAFF6B6B)   // 半透明红，视觉上与底�
 private val ERASE_COLOR = Color.Transparent   // 橡皮擦还原为透明
 
 /** 单条笔画：路径 + 画笔半径 + 是否为橡皮擦 */
-private data class Stroke(val path: Path, val radius: Float, val erase: Boolean)
+internal data class Stroke(val path: Path, val radius: Float, val erase: Boolean)
 
 /**
  * Inpaint 涂抹画板（MD3E §4-5 规划项）：

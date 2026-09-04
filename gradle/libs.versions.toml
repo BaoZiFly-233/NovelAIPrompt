@@ -29,6 +29,7 @@ androidCompileSdk = "37"
 
 [libraries]
 compose-material-icons-core = { module = "org.jetbrains.compose.material:material-icons-core", version.ref = "composeMaterialIcons" }
+compose-material-icons-extended = { module = "org.jetbrains.compose.material:material-icons-extended", version.ref = "composeMaterialIcons" }
 
 # Ktor (network layer)
 ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
