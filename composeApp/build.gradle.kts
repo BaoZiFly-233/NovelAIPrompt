@@ -49,6 +49,7 @@ kotlin {
         }
         jvmMain.dependencies {
             implementation(compose.desktop.currentOs)
+            implementation(project(":core:window"))
             implementation(libs.coil.network.okhttp)
             implementation(libs.coroutines.swing)
         }

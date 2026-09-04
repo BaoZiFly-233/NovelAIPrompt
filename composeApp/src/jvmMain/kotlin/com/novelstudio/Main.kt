@@ -17,7 +17,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.window.WindowDraggableArea
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -36,12 +35,13 @@ import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.type
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Window
-import androidx.compose.ui.window.WindowPlacement
-import androidx.compose.ui.window.WindowScope
 import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
+import com.novelstudio.core.window.DecoratedWindow
+import com.novelstudio.core.window.WindowChrome
+import com.novelstudio.core.window.WindowChromeConfig
 import com.novelstudio.di.appModule
 import org.koin.core.context.startKoin
 
@@ -56,47 +56,43 @@ fun main() {
         val windowState = rememberWindowState(width = 1280.dp, height = 800.dp)
         var shortcutSequence by remember { mutableStateOf(0L) }
         var navigationShortcut by remember { mutableStateOf<NavigationShortcut?>(null) }
-        Window(
+
+        DecoratedWindow(
             onCloseRequest = ::exitApplication,
-            title = "NovelAI Diffusion Studio",
             state = windowState,
-            undecorated = true,
-            onPreviewKeyEvent = { event ->
-                if (event.type != KeyEventType.KeyDown || !event.isCtrlPressed) {
-                    false
-                } else {
-                    destinationForShortcut(event.key)?.let { destination ->
-                        shortcutSequence += 1
-                        navigationShortcut = NavigationShortcut(shortcutSequence, destination)
-                        true
-                    } ?: false
-                }
+            title = "NovelAI Diffusion Studio",
+            config = WindowChromeConfig(titleBarHeight = 44.dp),
+            minimumSize = DpSize(960.dp, 600.dp),
+            titleBar = { chrome ->
+                DesktopTitleBar(
+                    chrome = chrome,
+                    onMinimize = chrome::minimize,
+                    onToggleMaximize = chrome::toggleMaximize,
+                    onClose = chrome::close,
+                )
             },
-        ) {
+        ) { chrome ->
             App(
-                titleBar = {
-                    DesktopTitleBar(
-                        maximized = windowState.placement == WindowPlacement.Maximized,
-                        onMinimize = { windowState.isMinimized = true },
-                        onToggleMaximize = {
-                            windowState.placement = if (windowState.placement == WindowPlacement.Maximized) {
-                                WindowPlacement.Floating
-                            } else {
-                                WindowPlacement.Maximized
-                            }
-                        },
-                        onClose = ::exitApplication,
-                    )
-                },
                 navigationShortcut = navigationShortcut,
+                onPreviewKeyEvent = { event ->
+                    if (event.type != KeyEventType.KeyDown || !event.isCtrlPressed) {
+                        false
+                    } else {
+                        destinationForShortcut(event.key)?.let { destination ->
+                            shortcutSequence += 1
+                            navigationShortcut = NavigationShortcut(shortcutSequence, destination)
+                            true
+                        } ?: false
+                    }
+                },
             )
         }
     }
 }
 
 @Composable
-private fun WindowScope.DesktopTitleBar(
-    maximized: Boolean,
+private fun DesktopTitleBar(
+    chrome: WindowChrome,
     onMinimize: () -> Unit,
     onToggleMaximize: () -> Unit,
     onClose: () -> Unit,
@@ -105,21 +101,27 @@ private fun WindowScope.DesktopTitleBar(
         modifier = Modifier
             .fillMaxWidth()
             .height(44.dp)
-            .background(MaterialTheme.colorScheme.surfaceContainerLow),
+            .background(MaterialTheme.colorScheme.surfaceContainerLow)
+            .then(chrome.captionModifier),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        WindowDraggableArea(Modifier.weight(1f).fillMaxHeight()) {
-            Box(Modifier.fillMaxWidth().fillMaxHeight(), contentAlignment = Alignment.CenterStart) {
-                Text(
-                    text = "NovelAI Studio",
-                    modifier = Modifier.padding(horizontal = 14.dp),
-                    style = MaterialTheme.typography.labelLarge,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-            }
+        Box(
+            modifier = Modifier.weight(1f).fillMaxHeight(),
+            contentAlignment = Alignment.CenterStart,
+        ) {
+            Text(
+                text = "NovelAI Studio",
+                modifier = Modifier.padding(horizontal = 14.dp),
+                style = MaterialTheme.typography.labelLarge,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
         }
         TitleBarButton(WindowGlyph.Minimize, "最小化", onMinimize)
-        TitleBarButton(if (maximized) WindowGlyph.Restore else WindowGlyph.Maximize, if (maximized) "还原" else "最大化", onToggleMaximize)
+        TitleBarButton(
+            if (chrome.state.isMaximized) WindowGlyph.Restore else WindowGlyph.Maximize,
+            if (chrome.state.isMaximized) "还原" else "最大化",
+            onToggleMaximize,
+        )
         TitleBarButton(WindowGlyph.Close, "关闭", onClose)
     }
 }

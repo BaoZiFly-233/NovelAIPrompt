@@ -82,7 +82,10 @@ private const val IMAGE_TOOLS_ROUTE = "gallery/tools"
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun App(titleBar: @Composable () -> Unit = {}, navigationShortcut: NavigationShortcut? = null) {
+fun App(
+    navigationShortcut: NavigationShortcut? = null,
+    onPreviewKeyEvent: ((androidx.compose.ui.input.key.KeyEvent) -> Boolean)? = null,
+) {
     MD3ETheme(darkTheme = isSystemInDarkTheme()) {
         val settings = koinInject<SettingsStore>()
         var onboardingDone by rememberSaveable { mutableStateOf<Boolean?>(null) }
@@ -107,7 +110,7 @@ fun App(titleBar: @Composable () -> Unit = {}, navigationShortcut: NavigationSho
                 transitionSpec = { fadeIn(MD3EMotion.StandardEasing) togetherWith fadeOut(MD3EMotion.StandardEasing) },
                 label = "main-shell",
             ) {
-                MainShell(titleBar = titleBar, navigationShortcut = navigationShortcut)
+                MainShell(navigationShortcut = navigationShortcut)
             }
         }
     }
@@ -115,7 +118,7 @@ fun App(titleBar: @Composable () -> Unit = {}, navigationShortcut: NavigationSho
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun MainShell(titleBar: @Composable () -> Unit, navigationShortcut: NavigationShortcut?) {
+private fun MainShell(navigationShortcut: NavigationShortcut?) {
     val navController = rememberNavController()
     val backStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = backStackEntry?.destination?.route
@@ -125,72 +128,69 @@ private fun MainShell(titleBar: @Composable () -> Unit, navigationShortcut: Navi
     }
     LaunchedEffect(navigationShortcut) { navigationShortcut?.destination?.let(::navigate) }
 
-    Column(Modifier.fillMaxSize()) {
-        titleBar()
-        AdaptiveAppShell(
-            destinations = Destination.entries,
-            currentRoute = currentRoute,
-            onSelect = ::navigate,
-            onOpenSettings = { navController.navigate(SETTINGS_ROUTE) { launchSingleTop = true } },
-            modifier = Modifier.weight(1f),
-        ) { contentModifier ->
-            NavHost(
-                navController = navController,
-                startDestination = Destination.Gallery.route,
-                modifier = contentModifier,
-                enterTransition = {
-                    slideIntoContainer(
-                        towards = androidx.compose.animation.AnimatedContentTransitionScope.SlideDirection.Start,
-                        animationSpec = androidx.compose.animation.core.spring(dampingRatio = 1.0f, stiffness = 200f),
-                    ) + fadeIn(MD3EMotion.StandardEasing)
-                },
-                exitTransition = { fadeOut(MD3EMotion.StandardEasing) },
-                popEnterTransition = {
-                    slideIntoContainer(
-                        towards = androidx.compose.animation.AnimatedContentTransitionScope.SlideDirection.End,
-                        animationSpec = androidx.compose.animation.core.spring(dampingRatio = 1.0f, stiffness = 200f),
-                    ) + fadeIn(MD3EMotion.StandardEasing)
-                },
-                popExitTransition = { fadeOut(MD3EMotion.StandardEasing) },
+    AdaptiveAppShell(
+        destinations = Destination.entries,
+        currentRoute = currentRoute,
+        onSelect = ::navigate,
+        onOpenSettings = { navController.navigate(SETTINGS_ROUTE) { launchSingleTop = true } },
+        modifier = Modifier.fillMaxSize(),
+    ) { contentModifier ->
+        NavHost(
+            navController = navController,
+            startDestination = Destination.Gallery.route,
+            modifier = contentModifier,
+            enterTransition = {
+                slideIntoContainer(
+                    towards = androidx.compose.animation.AnimatedContentTransitionScope.SlideDirection.Start,
+                    animationSpec = androidx.compose.animation.core.spring(dampingRatio = 1.0f, stiffness = 200f),
+                ) + fadeIn(MD3EMotion.StandardEasing)
+            },
+            exitTransition = { fadeOut(MD3EMotion.StandardEasing) },
+            popEnterTransition = {
+                slideIntoContainer(
+                    towards = androidx.compose.animation.AnimatedContentTransitionScope.SlideDirection.End,
+                    animationSpec = androidx.compose.animation.core.spring(dampingRatio = 1.0f, stiffness = 200f),
+                ) + fadeIn(MD3EMotion.StandardEasing)
+            },
+            popExitTransition = { fadeOut(MD3EMotion.StandardEasing) },
+        ) {
+            composable(Destination.Gallery.route) {
+                GalleryScreen(
+                    viewModel = koinViewModel(),
+                    onOpenCompare = { navController.navigate(COMPARE_ROUTE) { launchSingleTop = true } },
+                    onOpenWorkbench = { navigate(Destination.Workbench) },
+                    onOpenOrganize = { navController.navigate(ORGANIZE_ROUTE) { launchSingleTop = true } },
+                    onOpenImageTools = { imageId ->
+                        imageToolsId = imageId
+                        navController.navigate(IMAGE_TOOLS_ROUTE) { launchSingleTop = true }
+                    },
+                )
+            }
+            composable(Destination.Workbench.route) { WorkbenchScreen(viewModel = koinViewModel()) }
+            composable(Destination.ArtistStrings.route) { ArtistStringScreen(viewModel = koinViewModel()) }
+            composable(Destination.Prompts.route) { PromptAssetScreen(viewModel = koinViewModel()) }
+            composable(Destination.Tags.route) { TagLibraryScreen(viewModel = koinViewModel()) }
+            composable(SETTINGS_ROUTE) { SettingsScreen() }
+            composable(
+                route = COMPARE_ROUTE,
+                enterTransition = { slideInVertically { it } + fadeIn(MD3EMotion.StandardEasing) },
+                exitTransition = { slideOutVertically { it } + fadeOut(MD3EMotion.StandardEasing) },
+            ) { CompareScreen(viewModel = koinViewModel()) }
+            composable(
+                route = ORGANIZE_ROUTE,
+                enterTransition = { slideInVertically { it } + fadeIn(MD3EMotion.StandardEasing) },
+                exitTransition = { slideOutVertically { it } + fadeOut(MD3EMotion.StandardEasing) },
+            ) { SwipeScreen(viewModel = koinViewModel()) }
+            composable(
+                route = IMAGE_TOOLS_ROUTE,
+                enterTransition = { slideInVertically { it } + fadeIn(MD3EMotion.StandardEasing) },
+                exitTransition = { slideOutVertically { it } + fadeOut(MD3EMotion.StandardEasing) },
             ) {
-                composable(Destination.Gallery.route) {
-                    GalleryScreen(
-                        viewModel = koinViewModel(),
-                        onOpenCompare = { navController.navigate(COMPARE_ROUTE) { launchSingleTop = true } },
-                        onOpenWorkbench = { navigate(Destination.Workbench) },
-                        onOpenOrganize = { navController.navigate(ORGANIZE_ROUTE) { launchSingleTop = true } },
-                        onOpenImageTools = { imageId ->
-                            imageToolsId = imageId
-                            navController.navigate(IMAGE_TOOLS_ROUTE) { launchSingleTop = true }
-                        },
-                    )
-                }
-                composable(Destination.Workbench.route) { WorkbenchScreen(viewModel = koinViewModel()) }
-                composable(Destination.ArtistStrings.route) { ArtistStringScreen(viewModel = koinViewModel()) }
-                composable(Destination.Prompts.route) { PromptAssetScreen(viewModel = koinViewModel()) }
-                composable(Destination.Tags.route) { TagLibraryScreen(viewModel = koinViewModel()) }
-                composable(SETTINGS_ROUTE) { SettingsScreen() }
-                composable(
-                    route = COMPARE_ROUTE,
-                    enterTransition = { slideInVertically { it } + fadeIn(MD3EMotion.StandardEasing) },
-                    exitTransition = { slideOutVertically { it } + fadeOut(MD3EMotion.StandardEasing) },
-                ) { CompareScreen(viewModel = koinViewModel()) }
-                composable(
-                    route = ORGANIZE_ROUTE,
-                    enterTransition = { slideInVertically { it } + fadeIn(MD3EMotion.StandardEasing) },
-                    exitTransition = { slideOutVertically { it } + fadeOut(MD3EMotion.StandardEasing) },
-                ) { SwipeScreen(viewModel = koinViewModel()) }
-                composable(
-                    route = IMAGE_TOOLS_ROUTE,
-                    enterTransition = { slideInVertically { it } + fadeIn(MD3EMotion.StandardEasing) },
-                    exitTransition = { slideOutVertically { it } + fadeOut(MD3EMotion.StandardEasing) },
-                ) {
-                    ImageToolsScreen(
-                        imageId = imageToolsId.orEmpty(),
-                        viewModel = koinViewModel(),
-                        onBack = navController::navigateUp,
-                    )
-                }
+                ImageToolsScreen(
+                    imageId = imageToolsId.orEmpty(),
+                    viewModel = koinViewModel(),
+                    onBack = navController::navigateUp,
+                )
             }
         }
     }
