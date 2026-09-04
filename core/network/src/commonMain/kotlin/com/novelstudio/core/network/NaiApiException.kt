@@ -1,6 +1,6 @@
 package com.novelstudio.core.network
 
-/** NovelAI API 带状态码的业务异常，供 UI 层做差异化提示与重试判定 */
+/** NovelAI API 带状态码的业务异常，供 UI 层给出差异化提示。 */
 class NaiApiException(val statusCode: Int, message: String) : Exception(message) {
 
     companion object {
@@ -11,7 +11,7 @@ class NaiApiException(val statusCode: Int, message: String) : Exception(message)
                 401 -> "API Token 无效或已过期，请到「设置」页重新配置"
                 402 -> "Anlas 余额不足，无法完成本次生成"
                 429 -> "请求过于频繁（限流），请稍后再试"
-                in 500..599 -> "NovelAI 服务暂时不可用（HTTP ${throwable.statusCode}），已自动重试仍失败"
+                in 500..599 -> "NovelAI 服务暂时不可用（HTTP ${throwable.statusCode}）；为避免重复计费，本次未自动重试"
                 else -> "请求失败（HTTP ${throwable.statusCode}）"
             }
             throwable.message?.contains("未配置", ignoreCase = false) == true -> throwable.message!!

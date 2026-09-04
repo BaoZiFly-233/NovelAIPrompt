@@ -3,7 +3,10 @@ package com.novelstudio.core.network
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.delay
 
-/** 指数退避重试（1s → 2s → 4s…），仅重试传输类错误与限流/服务端错误 */
+/**
+ * 指数退避重试（1s → 2s → 4s…），仅供明确幂等且不计费的读取操作使用。
+ * 图像生成与 Vibe 编码结果可能已在服务端产生，禁止用此工具包装。
+ */
 object Retry {
 
     suspend fun <T> withExponentialBackoff(
