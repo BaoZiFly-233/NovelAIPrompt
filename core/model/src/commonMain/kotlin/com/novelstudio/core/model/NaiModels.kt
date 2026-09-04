@@ -4,11 +4,18 @@ import kotlinx.serialization.Serializable
 
 /** NovelAI 扩散模型标识（V5 / V4.5 双轨算力体系） */
 @Serializable
-enum class NaiModel(val id: String, val displayName: String, val supportsTransparency: Boolean) {
-    V5_FULL("nai-diffusion-5-full", "V5 全能", true),
-    V5_CURATED("nai-diffusion-5-curated", "V5 精选", true),
-    V4_5_FULL("nai-diffusion-4-5-full", "V4.5 全能", false),
-    V4_5_CURATED("nai-diffusion-4-5-curated", "V4.5 精选", false);
+enum class NaiModel(
+    val id: String,
+    val displayName: String,
+    val supportsTransparency: Boolean,
+    val maxCharacterPrompts: Int,
+    /** 只有已确认存在对应官方端点模型的条目才允许 Inpaint。 */
+    val inpaintingModelId: String?,
+) {
+    V5_FULL("nai-diffusion-5-full", "V5 全能", true, 22, "nai-diffusion-5-full-inpainting"),
+    V5_CURATED("nai-diffusion-5-curated", "V5 精选", true, 22, "nai-diffusion-5-curated-inpainting"),
+    V4_5_FULL("nai-diffusion-4-5-full", "V4.5 全能", false, 6, "nai-diffusion-4-5-full-inpainting"),
+    V4_5_CURATED("nai-diffusion-4-5-curated", "V4.5 精选", false, 6, "nai-diffusion-4-5-curated-inpainting");
 
     companion object {
         fun fromId(id: String): NaiModel = entries.firstOrNull { it.id == id } ?: V5_FULL
