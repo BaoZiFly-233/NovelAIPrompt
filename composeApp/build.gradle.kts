@@ -92,6 +92,12 @@ compose.desktop {
                 upgradeUuid = "B4C1F3E2-7D9A-4F1B-A832-5C6E8D2A0F74"
             }
         }
+
+        buildTypes.release.proguard {
+            // 禁用 ProGuard 混淆：桌面应用对包体积不敏感，已有 jlink 裁剪运行时
+            // 避免 KMP 项目（Ktor/OkHttp）可选依赖导致的 unresolved references 报错
+            isEnabled.set(false)
+        }
     }
 }
 
