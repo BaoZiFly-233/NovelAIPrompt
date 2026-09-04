@@ -12,41 +12,42 @@ enum class SubscriptionTier(val displayName: String) {
     UNKNOWN("未知");
 }
 
-/** V5 Opus 充能电池状态快照 */
+/** V5 Opus 用量额度快照；percent 由官方接口定义为 [0, 100+]，不可反推剩余张数。 */
 @Serializable
 data class OpusBatteryState(
     val tier: SubscriptionTier = SubscriptionTier.UNKNOWN,
-    val anlas: Int = 0,
-    /** 充能电池剩余百分比 [0, 100] */
-    val batteryPercent: Float = 0f,
+    val isSubscriptionActive: Boolean = false,
+    val batteryPercent: Int? = null,
+    /** 官方 usage.isNegative；true 表示当前用量额度不可用。 */
+    val isUsageUnavailable: Boolean = true,
+    val timeUntilNextPercentSeconds: Int? = null,
 ) {
-    val isOpus: Boolean get() = tier == SubscriptionTier.OPUS
-    val isDepleted: Boolean get() = batteryPercent <= BATTERY_EMPTY
-    val isLow: Boolean get() = batteryPercent <= BATTERY_LOW
+    val isOpus: Boolean get() = isSubscriptionActive && tier == SubscriptionTier.OPUS
+    val canUseV5Allowance: Boolean
+        get() = isOpus && batteryPercent != null && !isUsageUnavailable
+
+    val isLow: Boolean
+        get() = batteryPercent?.let { it <= BATTERY_WARNING } ?: true
 
     companion object {
-        const val BATTERY_EMPTY = 0f
-        const val BATTERY_LOW = 10f
-        const val BATTERY_EXPLORATION_LOW = 30f
+        const val BATTERY_WARNING = 10
+        /** 客户端“探索省额度”模式的显式策略阈值，并非服务端可用性边界。 */
+        const val BATTERY_EXPLORATION_LOW = 30
     }
-}
-
-/** 智能双轨路由状态机的输出决策 */
-@Serializable
-enum class DispatchDecision(val description: String) {
-    /** 直接扣除 V5 电池，0 Anlas */
-    USE_V5_BATTERY("扣除 V5 电池（0 Anlas）"),
-
-    /** V5 电量不足，需要用户确认扣 Anlas */
-    CONFIRM_ANLAS("V5 电量不足，需确认扣 Anlas"),
-
-    /** 探索抽卡模式下电量过低，自动切 V4.5 无限池 */
-    FALLBACK_V4_5("自动切换 V4.5 无限池（免费）"),
 }
 
 /** 生成任务生命周期状态 */
 @Serializable
-enum class TaskStatus { QUEUED, RUNNING, SUCCEEDED, FAILED, CANCELLED }
+enum class TaskStatus {
+    QUEUED,
+    WAITING_ANLAS_CONFIRMATION,
+    RUNNING,
+    SUCCEEDED,
+    FAILED,
+    /** 进程中断或网络结果不明；禁止按普通失败自动重试。 */
+    FAILED_UNKNOWN,
+    CANCELLED,
+}
 
 /** 一次生成任务的领域实体 */
 @Serializable
@@ -54,9 +55,11 @@ data class GenerationTask(
     val id: String,
     val parameters: GenerationParameters,
     val status: TaskStatus = TaskStatus.QUEUED,
-    val decision: DispatchDecision? = null,
+    val preflight: GenerationPreflight? = null,
     val errorMessage: String? = null,
+    /** 首图兼容入口；批量结果请使用 resultImageIds。 */
     val resultImageId: String? = null,
+    val resultImageIds: List<String> = resultImageId?.let(::listOf).orEmpty(),
     val createdAt: Long = 0L,
     val completedAt: Long? = null,
 )
@@ -77,20 +80,21 @@ data class ImageRecord(
     val sampler: String = Sampler.K_EULER.id,
     val width: Int = 1024,
     val height: Int = 1024,
-    val starRating: Int = 3,
     val isFavorite: Boolean = false,
     val hasTransparency: Boolean = false,
     val rawMetadataJson: String = "",
+    val artistStringId: String? = null,
+    val promptAssetId: String? = null,
+    val parentImageId: String? = null,
+    val operationType: ImageOperation = ImageOperation.IMPORT,
+    val generationSnapshotJson: String = "",
+    val mimeType: String = "image/png",
+    val archivedAt: Long? = null,
+    val trashedAt: Long? = null,
     val createdAt: Long = 0L,
 ) {
-    val isDisliked: Boolean get() = starRating == STAR_DISLIKE
-    val isLiked: Boolean get() = starRating >= STAR_LIKE
-
-    companion object {
-        const val STAR_DISLIKE = 1
-        const val STAR_NEUTRAL = 3
-        const val STAR_LIKE = 5
-    }
+    val isArchived: Boolean get() = archivedAt != null
+    val isTrashed: Boolean get() = trashedAt != null
 }
 
 /** PNG tEXt:Comment 内嵌的 NAI 官方生成元数据（用于图库回填工作台） */
